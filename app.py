@@ -259,7 +259,7 @@ def main():
         if model == 'Logistic Regression':
             df = pd.read_csv("data/clean_twpoi_data/TrafficWeatherEvent_June18_Aug18_Publish.csv")
             pred_path = st.text_area("data file path : ",
-                        "/Users/moustaphakinty/PycharmProjects/accident-risk-mkinty/data/predict_data/first_new_data.csv")
+                        "/Users/moustaphakinty/PycharmProjects/mkinty-acc-risk-app/data/predict_data/first_new_data.csv")
             X_valid = pd.read_csv("{}".format(pred_path))
             st.write(X_valid)
             X = df.loc[:, df.columns != "predicted_accident"]
@@ -282,7 +282,7 @@ def main():
         elif model == 'Gradient Boosting Classifier':
             df = pd.read_csv("data/clean_twpoi_data/TrafficWeatherEvent_June18_Aug18_Publish.csv")
             pred_path = st.text_area("data file path : ",
-                        "/Users/moustaphakinty/PycharmProjects/accident-risk-mkinty/data/predict_data/first_new_data.csv")
+                        "/Users/moustaphakinty/PycharmProjects/mkinty-acc-risk-app/data/predict_data/first_new_data.csv")
             X_valid = pd.read_csv("{}".format(pred_path))
             st.write(X_valid)
             X = df.loc[:, df.columns != "predicted_accident"]
