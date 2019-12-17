@@ -2,8 +2,6 @@ absl-py
 alabaster
 altair
 anaconda-client
-anaconda-navigator
-anaconda-project
 appnope
 appscript
 argh
