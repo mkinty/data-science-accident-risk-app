@@ -127,7 +127,6 @@ more-itertools
 mpmath
 msgpack
 multipledispatch
-navigator-updater
 nbconvert
 nbformat
 networkx
@@ -163,7 +162,7 @@ plotly-express
 pluggy
 ply
 postgres
-prometheus-client
+
 prompt-toolkit
 protobuf
 psutil
@@ -195,7 +194,7 @@ pytest-astropy
 pytest-doctestplus
 pytest-openfiles
 pytest-remotedata
-python-dateutil
+
 pytz
 PyWavelets
 PyYAML
@@ -208,7 +207,6 @@ requests-oauthlib
 retrying
 rope
 rsa
-ruamel-yaml
 s3transfer
 scikit-image
 scikit-learn
