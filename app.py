@@ -1,9 +1,9 @@
 #############                                         #######################
                          #######   Librairies   ######
 ##############                                      ########################
-
+import os
 from pathlib import Path
-
+from PIL import Image
 import pandas as pd
 import plotly.express as px
 import streamlit as st
@@ -23,7 +23,7 @@ def main():
 
 
 
-    activities = ["Accueil", "Datasets", "Data Viz", "Models", "Prediction", "Ressources"]
+    activities = ["Accueil", "Datasets", "Data Viz", "Models", "Prediction", "Auteur"]
     choice = st.sidebar.selectbox("choose Activity", activities)
 
     all_city = ["Atlanta", "Austin", "Charlotte", "Dallas", "Houston", "LosAngeles"]
@@ -60,8 +60,18 @@ def main():
             TrafficWeatherEvent = load_twpoi_data()
 
     if choice == "Accueil" :
-        st.title("Application")
-        st.subheader("Prévision du risque d'accident de trafic")
+        #st.title("Streamlit ML App")
+        html_temp = """
+        <div style = "background-color : magenta ; padding:10px;">
+        <h2> PRÉVISION DU RISQUE D'ACCIDENT DE TRAFIC</h2>
+        </div>
+        """
+        st.markdown(html_temp, unsafe_allow_html=True)
+
+        image = Image.open('images/index.jpg')
+        st.image(image, use_column_width = True)
+
+
 
     if choice == "Datasets":
         st.subheader("Jeux de Données : https://smoosavi.org/datasets/lstw \n "
@@ -252,62 +262,62 @@ def main():
 
     if choice == "Prediction" :
         st.info("Prédire le risque d'accident de trafic")
-        model = st.selectbox('Which algorithm?', alg)
-
+        df = pd.read_csv("data/clean_twpoi_data/TrafficWeatherEvent_June18_Aug18_Publish.csv")
+        st_ms = st.multiselect("Renseigner les valeurs des variables ci-dessous dans un fichier .csv", df.columns.tolist(), default=df.columns)
         # Model de Regression logistic
+        file_path = st.text_area("Pour prédire le risque d'accident de trafic, indiquer le chemin de votre fichier .csv :" )
+        filename = os.path.join(file_path)
+        if filename:
 
-        if model == 'Logistic Regression':
-            df = pd.read_csv("data/clean_twpoi_data/TrafficWeatherEvent_June18_Aug18_Publish.csv")
-            pred_path = st.text_area("data file path : ",
-                        "/Users/moustaphakinty/PycharmProjects/mkinty-acc-risk-app/data/predict_data/first_new_data.csv")
-            X_valid = pd.read_csv("{}".format(pred_path))
+            X_valid = pd.read_csv("{}".format(filename))
             st.write(X_valid)
-            X = df.loc[:, df.columns != "predicted_accident"]
-            y = df.loc[:, df.columns == "predicted_accident"]
 
-            # Split in train/test
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+            model = st.selectbox('Which algorithm ?', alg)
 
-            X_train = sc_x.fit_transform(X_train)
-            X_test = sc_x.transform(X_test)
-            X_valid = sc_x.transform(X_valid)
+            if model == 'Logistic Regression':
+                X = df.loc[:, df.columns != "predicted_accident"]
+                y = df.loc[:, df.columns == "predicted_accident"]
 
-            classifier.fit(X_train, y_train)
+                # Split in train/test
+                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
 
-            pred_valid = classifier.predict(X_valid)
-            pred_valid =(pred_valid == 1)
-            if st.button("Evaluer"):
-                st.text("Risque d'accident de trafic ::\n{} ".format(pred_valid))
+                X_train = sc_x.fit_transform(X_train)
+                X_test = sc_x.transform(X_test)
+                X_valid = sc_x.transform(X_valid)
 
-        elif model == 'Gradient Boosting Classifier':
-            df = pd.read_csv("data/clean_twpoi_data/TrafficWeatherEvent_June18_Aug18_Publish.csv")
-            pred_path = st.text_area("data file path : ",
-                        "/Users/moustaphakinty/PycharmProjects/mkinty-acc-risk-app/data/predict_data/first_new_data.csv")
-            X_valid = pd.read_csv("{}".format(pred_path))
-            st.write(X_valid)
-            X = df.loc[:, df.columns != "predicted_accident"]
-            y = df.loc[:, df.columns == "predicted_accident"]
+                classifier.fit(X_train, y_train)
 
-            # Split in train/test
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+                pred_valid = classifier.predict(X_valid)
+                pred_valid =(pred_valid == 1)
+                if st.button("Evaluer"):
+                    st.write("Le risque d'accident de trafic : \n {} ".format(pred_valid))
 
-            X_train = sc_x.fit_transform(X_train)
-            X_test = sc_x.transform(X_test)
-            X_valid = sc_x.transform(X_valid)
+            elif model == 'Gradient Boosting Classifier':
 
-            gb_clf.fit(X_train, y_train)
+                X = df.loc[:, df.columns != "predicted_accident"]
+                y = df.loc[:, df.columns == "predicted_accident"]
 
-            pred_valid = gb_clf.predict(X_valid)
-            pred_valid =(pred_valid == 1)
-            if st.button("Evaluer"):
-                st.text("Risque d'accident de trafic ::\n{} ".format(pred_valid))
+                # Split in train/test
+                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
 
-    if choice == "Ressources" :
-        st.info(" Bibliographie : Moosavi, Sobhan, Mohammad Hossein Samavatian, Arnab Nandi, \n"
-                " Srinivasan Parthasarathy, and Rajiv Ramnath. “Short and Long-term Pattern Discovery \n"
-                "Over Large-Scale Geo-Spatiotemporal Data.” In proceedings of the 25th ACM SIGKDD International \n"
-                "Conference on Knowledge Discovery & Data Mining, ACM, 2019. ")
+                X_train = sc_x.fit_transform(X_train)
+                X_test = sc_x.transform(X_test)
+                X_valid = sc_x.transform(X_valid)
 
+                gb_clf.fit(X_train, y_train)
+
+                pred_valid = gb_clf.predict(X_valid)
+                pred_valid =(pred_valid == 1)
+                if st.button("Evaluer"):
+                    st.write("Le risque d'accident de trafic : \n {} ".format(pred_valid))
+
+    if choice == "Auteur" :
+        st.info(" Moustapha KINTY \n" 
+                "[`GitHub`](https://github.com/mkinty), [`LinkedIn`](https://www.linkedin.com/in/moustapha-kinty-8288b0153/), \n" "E-mail : kintymoustapha@gmail.com")
+
+
+        image = Image.open('images/mkinty.jpg')
+        st.image(image, use_column_width=True)
 
 if __name__ == "__main__":
     main()
