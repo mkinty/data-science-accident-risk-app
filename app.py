@@ -71,7 +71,7 @@ def main():
         image = Image.open('images/index.jpg')
         st.image(image, use_column_width = True)
 
-    def file_selector(folder_path='../../usr'):
+    def file_selector(folder_path='../../usr/local'):
         filenames = os.listdir(folder_path)
         selected_filename = st.selectbox("Placer votre fichier dans l'emplacement ci-dessous et selectionner le fichier", filenames)
         return os.path.join(folder_path, selected_filename)
