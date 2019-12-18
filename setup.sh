@@ -1,8 +1,5 @@
 mkdir -p ~/.streamlit/
 
-mkdir ~/uploads
-cd ~/uploads
-
 echo "\
 [general]\n\
 email = \"email@website.com\"\n\

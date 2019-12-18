@@ -61,7 +61,7 @@ def main():
 
     def file_selector(folder_path='./data/predict_data'):
         filenames = os.listdir(folder_path)
-        selected_filename = st.selectbox("Placer votre fichier dans l'emplacement ci-dessous et selectionner le fichier", filenames)
+        selected_filename = st.selectbox("Selectionner un des fichier .csv ci-dessous pour tester faire la prédiction", filenames)
         return os.path.join(folder_path, selected_filename)
 
 
@@ -163,7 +163,7 @@ def main():
         elif incident_choice == "TrafficWeatherEvent_June18_Aug18_Publish.csv":
             if st.checkbox("Show Dataset"):
                 st.write(TrafficWeatherEvent.tail(10))
-                if st.checkbox("Le taux de Zero accident"):
+                if st.checkbox("Le taux de zero accident"):
                     st.write("Le taux de zero accident  est égal à :", float(TrafficWeatherEvent[TrafficWeatherEvent['predicted_accident']==0].shape[0])/TrafficWeatherEvent.shape[0])
 
 
@@ -194,28 +194,27 @@ def main():
             city_choice = st.selectbox("file name", tw_data)
             if city_choice in tw_data:
                 df = pd.read_csv("data/clean_twpoi_data/{}".format(city_choice))
-                if st.checkbox("Show Dataset") :
-                    st.write(df.tail(10))
-                    if st.button("Classify"):
-                        X = df.loc[:, df.columns != "predicted_accident"]
-                        y = df.loc[:, df.columns == "predicted_accident"]
+                st.write(df.tail(5))
+                if st.button("Classify"):
+                    X = df.loc[:, df.columns != "predicted_accident"]
+                    y = df.loc[:, df.columns == "predicted_accident"]
 
-                        # Split in train/test
-                        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
+                    # Split in train/test
+                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
 
-                        X_train = sc_x.fit_transform(X_train)
-                        X_test = sc_x.transform(X_test)
-                        classifier.fit(X_train, y_train)
+                    X_train = sc_x.fit_transform(X_train)
+                    X_test = sc_x.transform(X_test)
+                    classifier.fit(X_train, y_train)
 
-                        pred_classifier = classifier.predict(X_test)
+                    pred_classifier = classifier.predict(X_test)
 
-                        # Accuracy score
-                        st.write("Accuracy score (training) :", classifier.score(X_train, y_train))
-                        st.write("Accuracy score (validation) ", classifier.score(X_test, y_test))
+                    # Accuracy score
+                    st.write("Accuracy score (training) :", classifier.score(X_train, y_train))
+                    st.write("Accuracy score (validation) ", classifier.score(X_test, y_test))
 
-                        # Confusion matrix
-                        cm_classifier = confusion_matrix(y_test, pred_classifier)
-                        st.write('Confusion matrix: ', cm_classifier)
+                    # Confusion matrix
+                    cm_classifier = confusion_matrix(y_test, pred_classifier)
+                    st.write('Confusion matrix: ', cm_classifier)
 
 
         # Grandient Boosting Classifier
@@ -223,30 +222,29 @@ def main():
             city_choice = st.selectbox("file name", tw_data)
             if city_choice in tw_data:
                 df = pd.read_csv("data/clean_twpoi_data/{}".format(city_choice))
-                if st.checkbox("Show Dataset"):
-                    st.write(df.tail(10))
-                    if st.button("Classify"):
-                        X = df.loc[:, df.columns != "predicted_accident"]
-                        y = df.loc[:, df.columns == "predicted_accident"]
+                st.write(df.tail(5))
+                if st.button("Classify"):
+                    X = df.loc[:, df.columns != "predicted_accident"]
+                    y = df.loc[:, df.columns == "predicted_accident"]
 
-                        # Split in train/test
-                        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
-
+                    # Split in train/test
+                    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=0)
 
 
-                        X_train = sc_x.fit_transform(X_train)
-                        X_test = sc_x.transform(X_test)
+
+                    X_train = sc_x.fit_transform(X_train)
+                    X_test = sc_x.transform(X_test)
 
 
-                        gb_clf.fit(X_train, y_train)
-                        # Accuracy score
-                        st.write("Accuracy score (training) :", gb_clf.score(X_train, y_train))
-                        st.write("Accuracy score (validation) ", gb_clf.score(X_test, y_test))
-                        pred_gb_clf = gb_clf.predict(X_test)
+                    gb_clf.fit(X_train, y_train)
+                    # Accuracy score
+                    st.write("Accuracy score (training) :", gb_clf.score(X_train, y_train))
+                    st.write("Accuracy score (validation) ", gb_clf.score(X_test, y_test))
+                    pred_gb_clf = gb_clf.predict(X_test)
 
-                        # Confusion matrix
-                        cm_gb_clf = confusion_matrix(y_test, pred_gb_clf)
-                        st.write('Confusion matrix: ', cm_gb_clf)
+                    # Confusion matrix
+                    cm_gb_clf = confusion_matrix(y_test, pred_gb_clf)
+                    st.write('Confusion matrix: ', cm_gb_clf)
 
     #############                                         #######################
                         #######   Prediction   ######
@@ -257,12 +255,9 @@ def main():
     if choice == "Prediction" :
         st.info("Prédire le risque d'accident de trafic")
         df = pd.read_csv("data/clean_twpoi_data/TrafficWeatherEvent_June18_Aug18_Publish.csv")
-        filename = st.text_input('Enter a file path:')
-        try:
-            with open(filename) as input:
-                st.text(input.read())
-        except FileNotFoundError:
-            st.error('File not found.')
+        filename = file_selector()
+        st.write('You selected `%s`' % filename)
+
         if st.checkbox("Show Dataset"):
             X_valid = pd.read_csv("{}".format(filename))
             st.write(X_valid)
@@ -308,11 +303,11 @@ def main():
 
     if choice == "Auteur" :
         st.info(" Moustapha KINTY \n" 
-                "[`GitHub`](https://github.com/mkinty), [`LinkedIn`](https://www.linkedin.com/in/moustapha-kinty-8288b0153/), \n" "E-mail : kintymoustapha@gmail.com")
+                "[`GitHub`](https://github.com/mkinty), [`LinkedIn`](https://www.linkedin.com/in/moustapha-kinty-8288b0153/), \n"   "E-mail : kintymoustapha@gmail.com")
 
 
         image = Image.open('images/mkinty.jpg')
-        st.image(image, use_column_width=True)
+        st.image(image, )
 
 if __name__ == "__main__":
     main()
