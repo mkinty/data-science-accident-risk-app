@@ -71,6 +71,10 @@ def main():
         image = Image.open('images/index.jpg')
         st.image(image, use_column_width = True)
 
+    def file_selector(folder_path='../../Documents'):
+        filenames = os.listdir(folder_path)
+        selected_filename = st.selectbox("Placer votre fichier dans l'emplacement ci-dessous et selectionner le fichier", filenames)
+        return os.path.join(folder_path, selected_filename)
 
 
     if choice == "Datasets":
@@ -265,11 +269,15 @@ def main():
         df = pd.read_csv("data/clean_twpoi_data/TrafficWeatherEvent_June18_Aug18_Publish.csv")
         st_ms = st.multiselect("Renseigner les valeurs des variables ci-dessous dans un fichier .csv", df.columns.tolist(), default=df.columns)
         # Model de Regression logistic
-        file_path = st.text_area("Pour prédire le risque d'accident de trafic, indiquer le chemin de votre fichier .csv :" )
-        filename = os.path.join(file_path)
-        if filename:
+        filename = file_selector()
+        st.write('You selected `%s`' % filename)
+        #values = st.text_area("Pour prédire le risque d'accident de trafic, indiquer le chemin de votre fichier .csv :")
 
-            X_valid = pd.read_csv("{}".format(filename))
+
+
+        if st.checkbox("Show Dataset"):
+            X_valid = pd.read_csv(filename)
+
             st.write(X_valid)
 
             model = st.selectbox('Which algorithm ?', alg)
