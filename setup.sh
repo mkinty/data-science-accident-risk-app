@@ -1,5 +1,5 @@
 mkdir -p ~/.streamlit/
-mkdir -p /root/.streamlit
+
 echo "\
 [general]\n\
 email = \"email@website.com\"\n\
@@ -12,8 +12,3 @@ headless = true\n\
 enableCORS=false\n\
 port = $PORT\n\
 " > ~/.streamlit/config.toml
-
-bash -c 'echo -e "\
-[general]\n\
-email = \"your-email@domain.com\"\n\
-" > /root/.streamlit/credentials.toml'
