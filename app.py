@@ -255,6 +255,7 @@ def main():
     if choice == "Prediction" :
         st.info("Prédire le risque d'accident de trafic")
         df = pd.read_csv("data/clean_twpoi_data/TrafficWeatherEvent_June18_Aug18_Publish.csv")
+        #st.multiselect("Les variables du fichier", df.columns.tolist())
         filename = file_selector()
         st.write('You selected `%s`' % filename)
 
